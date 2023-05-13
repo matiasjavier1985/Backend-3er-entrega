@@ -4,7 +4,6 @@ export const cartsRouter = express.Router()
 const cartsManager = new ProductManager('./src/data/carts.json')
 const productManager = new ProductManager('./src/data/data.json')
 //INICIO ENDPOINT PRODUCTS
-
 cartsRouter.get('/', (req, res) => {
     try {
         const query = req.query
@@ -49,7 +48,6 @@ cartsRouter.delete('/:cid', async (req, res) => {
         .status(200).
         json({ status: "success", msg: 'producto eliminado', data: deletedProduct })
 })
-
 //CREAR UN PRODUCTO (NO NECESiTO PASAR ID)
 cartsRouter.post('/', async (req, res) => {
     try {
@@ -97,21 +95,5 @@ cartsRouter.post('/:cid/product/:pid', async (req, res) => {
     catch (error) {
         return res.status(500).json({ status: 'error', msg: 'no se pudo crear el producto', error: error.message });
     }
-})
-//MODIFICAR UN PRODUCTO (NECEISTO PASAR ID)
-cartsRouter.put('/:cid', async (req, res) => {
-    const cid = req.params.id
-    const newBody = req.body
-    const updatedProduct = await cartsManager.updateProduct(cid, newBody)
-    if (!updatedProduct) {
-        console.log('Producto para actualizar no encontrado')
-        return res
-            .status(404)
-            .json({ status: "error", msg: 'Producto para actualizar no encontrado', data: {} })
-    }
-
-    return res
-        .status(200).
-        json({ status: "success", msg: 'producto modificado', data: updatedProduct })
 })
 //FIN ENDPOINT PRODUCTS
