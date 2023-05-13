@@ -1,5 +1,5 @@
-const fs = require ("fs")
-class ProductManager{
+import fs from 'fs'
+export class ProductManager{
     constructor(path) {
         this.path = path
         this.readProductsFromFile()
@@ -31,7 +31,6 @@ class ProductManager{
     getProducts(){
         return this.products
     }
-
     getIdMax(){
         let idMax = 0
         this.products.forEach(prod => {
@@ -92,6 +91,30 @@ class ProductManager{
         await this.saveProductsToFile()
         return true;
     }
+    async addCart(product) {
+        const idMax = this.getIdMax()
+        const prod = { id: idMax, ...product }
+        this.products.push(prod)
+        await this.saveProductsToFile()
+        return true
+    }
+    async addProdCart(cid, product){
+        const productIndex = this.products.findIndex((prod) => parseInt(prod.id) === parseInt(cid))
+        const newProduct = {id:product.id}
+        if (productIndex != -1) {
+            const cartObt  = this.products[productIndex]  
+            const cartObtIndex = cartObt.products.findIndex((prod) => parseInt(prod.id) === parseInt(product.id))
+            if (cartObtIndex != -1) {
+                cartObt.products[cartObtIndex].quantity++
+            }else{
+            newProduct.quantity = 1
+            cartObt.products.push(newProduct)
+            }
+            await this.saveProductsToFile()
+            return true
+        }else{
+            return false
+        }
+    }
+    
 }
-
-module.exports = ProductManager
